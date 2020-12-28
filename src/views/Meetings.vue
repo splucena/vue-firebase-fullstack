@@ -75,7 +75,9 @@
 								<router-link
 									class="btn btn-sm btn-outline-secondary"
 									title="Attendees"
-									to=""
+									:to="
+										'/attendees/' + user.uid + '/' + item.id
+									"
 								>
 									<font-awesome-icon
 										icon="list-ul"

@@ -75,7 +75,14 @@ export default {
 								eMail: payload.eMail,
 								createdAt: Firebase.firestore.FieldValue.serverTimestamp(),
 							})
-							.then(() => this.$router.push("/"));
+							.then(() =>
+								this.$router.push(
+									"/attendees/" +
+										payload.userID +
+										"/" +
+										payload.meetingID
+								)
+							);
 					} else {
 						this.error = "Sorry, no such meeting.";
 					}
@@ -86,36 +93,35 @@ export default {
 		Firebase.auth().onAuthStateChanged((user) => {
 			if (user) {
 				this.user = user;
-			}
-
-			db.collection("users")
-				.doc(this.user.uid)
-				.collection("meetings")
-				.onSnapshot((snapshot) => {
-					const snapData = [];
-					snapshot.forEach((doc) => {
-						snapData.push({
-							id: doc.id,
-							name: doc.data().name,
+				db.collection("users")
+					.doc(this.user.uid)
+					.collection("meetings")
+					.onSnapshot((snapshot) => {
+						const snapData = [];
+						snapshot.forEach((doc) => {
+							snapData.push({
+								id: doc.id,
+								name: doc.data().name,
+							});
+						});
+						this.meetings = snapData.sort((a, b) => {
+							if (a.name.toLowerCase() < b.name.toLowerCase()) {
+								return -1;
+							} else {
+								return 1;
+							}
 						});
 					});
-					this.meetings = snapData.sort((a, b) => {
-						if (a.name.toLowerCase() < b.name.toLowerCase()) {
-							return -1;
-						} else {
-							return 1;
-						}
-					});
-				});
+			}
 		});
 
-		db.collection("users")
+		/*db.collection("users")
 			.doc("5OWnBAm8fpzxZvWjAVuU")
 			.get()
 			.then((snapshot) => {
 				const user = snapshot.data().name;
 				console.log(user);
-			});
+			});*/
 	},
 };
 </script>
